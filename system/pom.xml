@@ -46,11 +46,10 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
-        <!-- <dependency>
+         <dependency>
              <groupId>com.course</groupId>
              <artifactId>server</artifactId>
-         </dependency>-->
+         </dependency>
     </dependencies>
     <repositories>
         <repository>
