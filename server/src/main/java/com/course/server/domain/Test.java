@@ -1,22 +1,24 @@
 package com.course.server.domain;
 
 public class Test {
-    private String id;
-    private String name;
+    private String linksid;
 
-    public String getId() {
-        return id;
+    public String getLinksid() {
+        return linksid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setLinksid(String linksid) {
+        this.linksid = linksid;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", linksid=").append(linksid);
+        sb.append("]");
+        return sb.toString();
     }
 }
