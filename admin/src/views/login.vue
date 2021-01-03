@@ -48,7 +48,9 @@
                             <span class="lbl">记住我</span>
                           </label>
 
-                          <button type="button" class="width-35 pull-right btn btn-sm btn-primary">
+                          <button type="button"
+                          v-on:click="login()"
+                                  class="width-35 pull-right btn btn-sm btn-primary">
                             <i class="ace-icon fa fa-key"></i>
                             <span class="bigger-110">登录</span>
                           </button>
@@ -71,8 +73,17 @@
   </div><!-- /.main-container -->
 </template>
 <script>
-$('body').attr('class', 'login-layout light-login');
+
 export default {
   name: 'App',
+  mounted:function(){
+    $('body').removeClass('no-skin');
+    $('body').attr('class', 'login-layout light-login');
+  },
+  methods:{
+    login(){
+      this.$router.push("/admin")
+    }
+  }
 }
 </script>
