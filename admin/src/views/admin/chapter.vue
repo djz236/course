@@ -975,15 +975,21 @@
 </template>
 <script>
   export default {
-  name: 'chapter',
-  mounted:function(){
-    //sidebar 激活样式方法
-   // this.$parent.activeSidebar("business-chapter-sidebar");
-  },
-  methods:{
-    login(){
-      this.$router.push("/admin")
+    name: 'chapter',
+    mounted:function(){
+      //sidebar 激活样式方法
+      // this.$parent.activeSidebar("business-chapter-sidebar");
+      let _this=this;
+      _this.list();
+    },
+    methods:{
+      list(){
+        let _this=this;
+        _this.$ajax.get('http://127.0.0.1:9002/business/admin/chapter/list')
+            .then((response)=>{
+              console.log("查询大章列表结果：",response);
+            });
+      }
     }
-  }
   }
 </script>
