@@ -9,7 +9,8 @@
 export default {
   name: 'welcome',
   mounted:function(){
-    this.$parent.activeSidebar("welcome-sidebar");
+    //sidebar 激活样式方法
+  //  this.$parent.activeSidebar("welcome-sidebar");
    },
   methods:{
     login(){
