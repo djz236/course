@@ -19,5 +19,4 @@ private static final Logger LOG=LoggerFactory.getLogger(GateWayApplication.class
 		LOG.info("gateway 地址：\thttp://127.0.0.1:{}",run.getEnvironment().getProperty("server.port"));
 
 	}
-
 }
