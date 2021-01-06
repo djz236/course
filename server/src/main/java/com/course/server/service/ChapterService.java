@@ -8,6 +8,7 @@ import com.course.server.domain.TestExample;
 import com.course.server.dto.ChapterDto;
 import com.course.server.mapper.ChapterMapper;
 import com.course.server.mapper.TestMapper;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class ChapterService {
     @Resource
     private ChapterMapper chapterMapper;
     public List<ChapterDto> list(){
+        PageHelper.startPage(1,1);
         ChapterExample chapterExample = new ChapterExample();
        /* chapterExample.createCriteria().andIdEqualTo("1");*/
         chapterExample.setOrderByClause("id desc");
