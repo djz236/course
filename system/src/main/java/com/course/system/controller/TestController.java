@@ -14,8 +14,8 @@ import java.util.List;
 public class TestController {
     @Resource
     private ChapterService chapterService;
-    @RequestMapping("/test")
+   /* @RequestMapping("/test")
     public List<ChapterDto> test() {
         return  chapterService.list();
-    }
+    }*/
 }
