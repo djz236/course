@@ -34,7 +34,6 @@ public class ChapterService {
         List<Chapter> chapterList = chapterMapper.selectByExample(chapterExample);
         PageInfo<Chapter> pageInfo=new PageInfo<>(chapterList);
         pageDto.setTotal(pageInfo.getTotal());
-
         List<ChapterDto> chapterDtoList=new ArrayList<>();
         for (int i=0;i<chapterList.size();i++){
             Chapter chapter=chapterList.get(i);
@@ -58,6 +57,10 @@ public class ChapterService {
     }
     private void update(Chapter chapter){
         chapterMapper.updateByPrimaryKey(chapter);
+    }
+
+    public void delete(String id) {
+        chapterMapper.deleteByPrimaryKey(id);
     }
 }
 
