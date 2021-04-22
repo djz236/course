@@ -1,0 +1,177 @@
+<template>
+  <div  >
+    <button type="button" v-on:click="selectFile()" class="btn btn-white btn-default btn-round">
+      <i class="ace-icon fa fa-upload"></i>
+      {{ text }}
+    </button>
+    <input hidden
+           ref="file" v-bind:id="inputId+'-input'" type="file" v-on:change="uploadFile()">
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'big-file',
+  props: {
+    text:{
+      default: "上传大文件"
+    },
+    inputId:{
+      default: "file-upload"
+    },
+    suffixs:{
+      default:[]
+    },
+    use:{
+      default:''
+    },
+    shardSize:{
+      default:50*1024
+    },
+    url:{
+      default:"oss-append"
+    },
+    list: {
+      type: Function,
+      default: null
+    },
+    afterUpload:{
+      type:Function,
+      default:null
+    },
+    itemCount: Number // 显示的页码数，比如总共有100页，只显示10页，其它用省略号表示
+  },
+  data: function () {
+    return { }
+  },
+  methods: {
+    uploadFile() {
+      let _this = this;
+      let formData = new window.FormData();
+      let file = _this.$refs.file.files[0];
+
+      let suffixs = _this.suffixs;//['jpg', 'jpeg', 'png'];
+      let fileName=file.name;
+      let suffix=fileName.substring(
+          fileName.lastIndexOf(".")+1,
+          fileName.length
+      ).toLowerCase();
+
+      let validateSuffix=false;
+
+      for(let i=0;i<suffix.length;i++){
+        if(suffixs[i].toLowerCase()===suffix){
+          validateSuffix=true;
+          break;
+        }
+      }
+      if(!validateSuffix){
+        Toast.warning("文件格式不正确！只支持上传："+suffixs.join(","))
+        $('#'+_this.inputId+"-input").val('');
+        return;
+      }
+
+      //文件分片
+      let shardSize=_this.shardSize;// 20*1024*1024;//以20M为一个分片
+      let shardIndex=1;//分片索引 1标识第一个分片
+
+      let size=file.size;
+      let shardTotal=
+          Math.ceil(size/shardSize);//总分片数量
+      let key=hex_md5(file.name+file.size()+
+      file.type);
+      let key10=parseInt(key,16);
+      let key62=Tool._10to62(key10);
+      let param = {
+        'shardIndex': shardIndex,
+        'shardSize': shardSize,
+        'shardTotal': shardTotal,
+        'use': _this.use,
+        'name': file.name,
+        'suffix': suffix,
+        'size': file.size,
+        'key': key62
+      };
+      Loading.show();
+
+      _this.upload(param);
+      _this.check(param);
+
+    },
+    selectFile() {  let _this = this;
+      $('#'+_this.inputId+"-input").trigger('click');
+    },
+    upload: function (param) {
+      let _this = this;
+      let shardIndex=param.shardIndex;
+      let shardTotal=param.shardTotal;
+      let shardSize=param.shardSize;
+      let fileShard = _this.getFileShard(shardIndex, shardSize, file);
+
+      //将图片转为base64
+      let fileReader = new FileReader();
+
+      Progress.show(parseInt((shardIndex - 1) * 100 / shardTotal));
+      fileReader.onload = function (e) {
+        let base64 = e.target.result;
+        // console.log("base64:", base64);
+
+        param.shard = base64;
+
+        _this.$ajax.post(process.env.VUE_APP_SERVER + '/file/admin/' + _this.url, param).then((response) => {
+          let resp = response.data;
+          console.log("上传文件成功：", resp);
+          Progress.show(parseInt(shardIndex * 100 / shardTotal));
+          if (shardIndex < shardTotal) {
+            // 上传下一个分片
+            param.shardIndex = param.shardIndex + 1;
+            _this.upload(param);
+          } else {
+            Progress.hide();
+            _this.afterUpload(resp);
+            $("#" + _this.inputId + "-input").val("");
+          }
+        });
+      };
+      fileReader.readAsDataURL(fileShard);
+    },
+    /**
+     * 检查文件状态，是否已上传过？传到第几个分片？
+     */
+    check (param) {
+      let _this = this;
+      _this.$ajax.get(process.env.VUE_APP_SERVER + '/file/admin/check/' + param.key).then((response)=>{
+        let resp = response.data;
+        if (resp.success) {
+          let obj = resp.content;
+          if (!obj) {
+            param.shardIndex = 1;
+            console.log("没有找到文件记录，从分片1开始上传");
+            _this.upload(param);
+          } else if (obj.shardIndex === obj.shardTotal) {
+            // 已上传分片 = 分片总数，说明已全部上传完，不需要再上传
+            Toast.success("文件极速秒传成功！");
+            _this.afterUpload(resp);
+            $("#" + _this.inputId + "-input").val("");
+          }  else {
+            param.shardIndex = obj.shardIndex + 1;
+            console.log("找到文件记录，从分片" + param.shardIndex + "开始上传");
+            _this.upload(param);
+          }
+        } else {
+          Toast.warning("文件上传失败");
+          $("#" + _this.inputId + "-input").val("");
+        }
+      })
+    },
+    getFileShard: function (shardIndex, shardSize) {
+      let _this = this;
+      let file = _this.$refs.file.files[0];
+      let start = (shardIndex - 1) * shardSize;//当前分片的起始位置
+      let end = Math.min(file, start + shardSize);//  start+shardSize;//当前分片结束位置
+      let fileShard = file.slice(start, end);
+      return fileShard;
+    }
+  }
+}
+</script>

@@ -375,10 +375,10 @@
 
             <ul class="submenu">
               <li class="">
-                <a href="tables.html">
+                <router-link to="/system/user" >
                   <i class="menu-icon fa fa-caret-right"></i>
                   用户管理
-                </a>
+                </router-link>
 
                 <b class="arrow"></b>
               </li>
@@ -405,6 +405,13 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
+              <li class="active" id="business-category-sidebar" >
+                <router-link to="/business/category">
+                  <i class="menu-icon fa fa-caret-right"></i>
+                  分类管理
+                </router-link>
+                <b class="arrow"></b>
+              </li>
               <li class="active" id="business-course-sidebar" >
                 <router-link to="/business/course">
                   <i class="menu-icon fa fa-caret-right"></i>
@@ -413,23 +420,21 @@
 
                 <b class="arrow"></b>
               </li>
-              <li class="active" id="business-chapter-sidebar" >
-                <router-link to="/business/chapter">
+              <li class="active" id="business-teacher-sidebar" >
+                <router-link to="/business/teacher">
                   <i class="menu-icon fa fa-caret-right"></i>
-                  大章管理
+                  讲师管理
                 </router-link>
 
                 <b class="arrow"></b>
               </li>
-
-              <li class="active" id="business-section-sidebar" >
-                <router-link to="/business/section">
+              <li class="active" id="file-file-sidebar" >
+                <router-link to="/file/file">
                   <i class="menu-icon fa fa-caret-right"></i>
-                  小节管理
+                  文件管理
                 </router-link>
                 <b class="arrow"></b>
               </li>
-
             </ul>
           </li>
         </ul><!-- /.nav-list -->
@@ -460,8 +465,6 @@
 							<span class="blue bolder">Ace</span>
 							Application &copy; 2013-2014
 						</span>
-
-            &nbsp; &nbsp;
             <span class="action-buttons">
 							<a href="#">
 								<i class="ace-icon fa fa-twitter-square light-blue bigger-150"></i>
@@ -502,8 +505,13 @@ export default {
       handler:function (val,oldVal) {
         console.log("----->页面",val,oldVal);
         let _this=this;
-        _this.$nextTick(function () { //页面加载完成后执行
-          _this.activeSidebar(_this.$route.name.replace("/","-")+"-sidebar");
+        if (!_this.hasResourceRouter(val.name)) {
+          _this.$router.push("/login");
+          return;
+        }
+
+        _this.$nextTick(function(){  //页面加载完成后执行
+          _this.activeSidebar(_this.$route.name.replace("/", "-") + "-sidebar");
         })
       }
     }
