@@ -90,7 +90,7 @@
                 <div class="col-sm-10">
                   <big-file
                       v-bind:input-id="'image-upload'"
-                      v-bind:text="'上传头像'" ,
+                      v-bind:text="'上传头像'"
                       v-bind:suffixs="['jpg', 'jpeg', 'png']"
                       v-bind:use="FILE_USE.TEACHER.key"
                       v-bind:after-upload="afterUpload"
@@ -100,17 +100,7 @@
                       <img v-bind:src="teacher.image" class="img-responsive">
                     </div>
                   </div>
-                  <button type="button" v-on:click="selectImage()" class="btn btn-white btn-default btn-round">
-                    <i class="ace-icon fa fa-upload"></i>
-                    上传头像
-                  </button>
-                  <input hidden
-                         ref="file" id="file-upload-input" type="file" v-on:change="uploadImage()">
-                  <div v-show="teacher.image" class="row">
-                    <div class="col-md-4">
-                      <img v-bind:src="teacher.image" class="img-responsive">
-                    </div>
-                  </div>
+
                 </div>
               </div>
               <div class="form-group">
