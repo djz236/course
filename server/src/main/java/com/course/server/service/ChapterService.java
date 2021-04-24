@@ -6,6 +6,7 @@ import com.course.server.domain.ChapterExample;
 import com.course.server.domain.Test;
 import com.course.server.domain.TestExample;
 import com.course.server.dto.ChapterDto;
+import com.course.server.dto.ChapterPageDto;
 import com.course.server.dto.PageDto;
 import com.course.server.mapper.ChapterMapper;
 import com.course.server.mapper.TestMapper;
@@ -13,7 +14,6 @@ import com.course.server.util.CopyUtil;
 import com.course.server.util.UuidUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.tools.ant.taskdefs.Copy;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,14 +26,18 @@ import java.util.List;
 public class ChapterService {
     @Resource
     private ChapterMapper chapterMapper;
-    public void list(PageDto pageDto){
-        PageHelper.startPage(pageDto.getPage(),pageDto.getSize());
+    public void list(ChapterPageDto chapterPageDto){
+        PageHelper.startPage(chapterPageDto.getPage(),chapterPageDto.getSize());
         ChapterExample chapterExample = new ChapterExample();
        /* chapterExample.createCriteria().andIdEqualTo("1");*/
+        ChapterExample.Criteria criteria = chapterExample.createCriteria();
+        if(!StringUtils.isEmpty(chapterPageDto.getCourseId())){
+            criteria.andCourseIdEqualTo(chapterPageDto.getCourseId());
+        }
         chapterExample.setOrderByClause("id desc");
         List<Chapter> chapterList = chapterMapper.selectByExample(chapterExample);
         PageInfo<Chapter> pageInfo=new PageInfo<>(chapterList);
-        pageDto.setTotal(pageInfo.getTotal());
+        chapterPageDto.setTotal(pageInfo.getTotal());
         List<ChapterDto> chapterDtoList=new ArrayList<>();
         for (int i=0;i<chapterList.size();i++){
             Chapter chapter=chapterList.get(i);
@@ -41,7 +45,7 @@ public class ChapterService {
             BeanUtils.copyProperties(chapter,chapterDto);
             chapterDtoList.add(chapterDto);
         }
-        pageDto.setList(chapterDtoList);
+        chapterPageDto.setList(chapterDtoList);
     }
     public void save(ChapterDto chapterDto){
         Chapter chapter = CopyUtil.copy(chapterDto,Chapter.class);
