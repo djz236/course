@@ -68,10 +68,10 @@ export default {
 
       formData.append('file',file);
       formData.append("use",_this.use);
-      Loading.show();
+     /* Loading.show();*/
       _this.$ajax.post(process.env.VUE_APP_SERVER + '/file/admin/upload',
           formData).then((response)=> {
-        Loading.hide();
+       /* Loading.hide();*/
         let resp = response.data;
         _this.afterUpload(resp);
         $('#'+_this.inputId+"-input").val('');

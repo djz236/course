@@ -4,7 +4,7 @@
       <i class="ace-icon fa fa-upload"></i>
       {{ text }}
     </button>
-    <input hidden
+    <input class="hidden"
            ref="file" v-bind:id="inputId+'-input'" type="file" v-on:change="uploadFile()">
   </div>
 </template>
@@ -74,12 +74,9 @@ export default {
       //文件分片
       let shardSize=_this.shardSize;// 20*1024*1024;//以20M为一个分片
       let shardIndex=1;//分片索引 1标识第一个分片
-
       let size=file.size;
-      let shardTotal=
-          Math.ceil(size/shardSize);//总分片数量
-      let key=hex_md5(file.name+file.size()+
-      file.type);
+      let shardTotal=  Math.ceil(size/shardSize);//总分片数量
+      let key=hex_md5(file.name+file.size+file.type);
       let key10=parseInt(key,16);
       let key62=Tool._10to62(key10);
       let param = {
@@ -92,7 +89,7 @@ export default {
         'size': file.size,
         'key': key62
       };
-      Loading.show();
+     /* Loading.show();*/
 
       _this.upload(param);
       _this.check(param);
@@ -106,8 +103,7 @@ export default {
       let shardIndex=param.shardIndex;
       let shardTotal=param.shardTotal;
       let shardSize=param.shardSize;
-      let fileShard = _this.getFileShard(shardIndex, shardSize, file);
-
+      let fileShard = _this.getFileShard(shardIndex, shardSize);
       //将图片转为base64
       let fileReader = new FileReader();
 
@@ -141,14 +137,23 @@ export default {
     check (param) {
       let _this = this;
       _this.$ajax.get(process.env.VUE_APP_SERVER + '/file/admin/check/' + param.key).then((response)=>{
+        console.log("response");
+        console.log(response);
+        console.log("response");
         let resp = response.data;
+        console.log("response1");
         if (resp.success) {
+          console.log("response2");
           let obj = resp.content;
+          console.log("response3");
           if (!obj) {
+            console.log("response4");
             param.shardIndex = 1;
+            console.log("response5");
             console.log("没有找到文件记录，从分片1开始上传");
             _this.upload(param);
           } else if (obj.shardIndex === obj.shardTotal) {
+            console.log("response6");
             // 已上传分片 = 分片总数，说明已全部上传完，不需要再上传
             Toast.success("文件极速秒传成功！");
             _this.afterUpload(resp);
@@ -158,6 +163,7 @@ export default {
             console.log("找到文件记录，从分片" + param.shardIndex + "开始上传");
             _this.upload(param);
           }
+
         } else {
           Toast.warning("文件上传失败");
           $("#" + _this.inputId + "-input").val("");
@@ -167,9 +173,11 @@ export default {
     getFileShard: function (shardIndex, shardSize) {
       let _this = this;
       let file = _this.$refs.file.files[0];
+
       let start = (shardIndex - 1) * shardSize;//当前分片的起始位置
-      let end = Math.min(file, start + shardSize);//  start+shardSize;//当前分片结束位置
+      let end = Math.min(file.size, start + shardSize);//  start+shardSize;//当前分片结束位置
       let fileShard = file.slice(start, end);
+
       return fileShard;
     }
   }
