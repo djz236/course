@@ -3,6 +3,7 @@ package com.course.server.service;
 import com.course.server.domain.Courseuser;
 import com.course.server.domain.CourseuserExample;
 import com.course.server.dto.CourseuserDto;
+import com.course.server.dto.LoginCourseuserDto;
 import com.course.server.dto.PageDto;
 import com.course.server.exception.BusinessException;
 import com.course.server.exception.BusinessExceptionCode;
@@ -11,6 +12,8 @@ import com.course.server.util.CopyUtil;
 import com.course.server.util.UuidUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -20,7 +23,7 @@ import java.util.List;
 
 @Service
 public class CourseuserService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CourseuserService.class);
     @Resource
     private CourseuserMapper courseuserMapper;
 
@@ -55,7 +58,7 @@ public class CourseuserService {
     private void insert(Courseuser courseuser) {
         courseuser.setId(UuidUtil.getShortUuid());
         Courseuser userDb = this.selectByLoginName(courseuser.getLoginname());
-        if(userDb!=null){
+        if (userDb != null) {
             throw new BusinessException(
                     BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
         }
@@ -66,7 +69,8 @@ public class CourseuserService {
      * 更新
      */
     private void update(Courseuser courseuser) {
-        courseuserMapper.updateByPrimaryKey(courseuser);
+        courseuser.setPassword(null);
+        courseuserMapper.updateByPrimaryKeySelective(courseuser);
     }
 
     /**
@@ -78,18 +82,56 @@ public class CourseuserService {
 
     /**
      * 根据登录名查询用户信息
+     *
      * @param loginName
      * @return
      */
-    public Courseuser selectByLoginName(String loginName){
+    public Courseuser selectByLoginName(String loginName) {
         CourseuserExample example = new CourseuserExample();
         CourseuserExample.Criteria criteria = example.createCriteria();
         criteria.andLoginnameEqualTo(loginName);
         List<Courseuser> courseusers = courseuserMapper.selectByExample(example);
-        if(CollectionUtils.isEmpty(courseusers)){
+        if (CollectionUtils.isEmpty(courseusers)) {
             return null;
-        }else{
+        } else {
             return courseusers.get(0);
+        }
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param courseuserDto
+     */
+    public void savePassword(CourseuserDto courseuserDto) {
+        Courseuser courseuser = new Courseuser();
+        courseuser.setId(courseuserDto.getId());
+        courseuser.setPassword(courseuserDto.getPassword());
+        courseuserMapper.updateByPrimaryKeySelective(courseuser);
+    }
+
+    /**
+     * 登录
+     *
+     * @param courseuserDto
+     */
+    public LoginCourseuserDto login(CourseuserDto courseuserDto) {
+        Courseuser courseuser = selectByLoginName(courseuserDto.getLoginname());
+        if (courseuser == null) {
+            //用户不存在
+            LOG.info("用户不存在!");
+            throw new BusinessException(
+                    BusinessExceptionCode.LOGIN_ERROR);
+        } else {
+            if (courseuser.getPassword().equals(courseuserDto.getPassword())) {
+                //登录成功
+                return CopyUtil.copy(courseuser, LoginCourseuserDto.class);
+            } else {
+                //密码不对
+                LOG.info("密码不对!");
+                throw new BusinessException(
+                        BusinessExceptionCode.LOGIN_ERROR);
+            }
         }
     }
 }
