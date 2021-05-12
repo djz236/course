@@ -66,20 +66,57 @@ public class CourseDto {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdAt;
 
     /**
      * 修改时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updatedAt;
+    private String content;
 
+    private List<ChapterDto> chapters;
+
+    private List<SectionDto> sections;
+    private TeacherDto teacher;
     /**
      * 讲师|Teacher.id
      */
     private String teacherId;
-private List<CategoryDto> categorys;
+    private List<CategoryDto> categorys;
+
+    public List<ChapterDto> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(List<ChapterDto> chapters) {
+        this.chapters = chapters;
+    }
+
+    public List<SectionDto> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<SectionDto> sections) {
+        this.sections = sections;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public TeacherDto getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(TeacherDto teacher) {
+        this.teacher = teacher;
+    }
 
     public List<CategoryDto> getCategorys() {
         return categorys;

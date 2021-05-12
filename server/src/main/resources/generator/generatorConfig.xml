@@ -48,7 +48,11 @@
        <!-- <table tableName="teacher" domainObjectName="Teacher"/>-->
        <!-- <table tableName="file" domainObjectName="File"/>-->
        <!-- <table tableName="course_content_file" domainObjectName="CourseContentFile"/>-->
-        <table tableName="courseuser" domainObjectName="Courseuser"/>
+        <!--<table tableName="courseuser" domainObjectName="Courseuser"/>-->
+        <!--<table tableName="resource" domainObjectName="Resource"/>-->
+        <!--<table tableName="role" domainObjectName="Role"/>-->
+       <!-- <table tableName="role_resource" domainObjectName="RoleResource"/>-->
+        <table tableName="role_user" domainObjectName="RoleUser"/>
 <!--
       <table tableName="course" domainObjectName="Course"/>
 -->

@@ -28,7 +28,7 @@
                       <fieldset>
                         <label class="block clearfix">
                           <span class="block input-icon input-icon-right">
-                            <input v-model="user.loginName" type="text" class="form-control" placeholder="用户名"/>
+                            <input v-model="user.loginname" type="text" class="form-control" placeholder="用户名"/>
                             <i class="ace-icon fa fa-user"></i>
                           </span>
                         </label>
@@ -39,12 +39,22 @@
                             <i class="ace-icon fa fa-lock"></i>
                           </span>
                         </label>
+                        <label class="block clearfix">
+                          <span class="block input-icon input-icon-right">
+                           <div class="input-group">
+                              <input  v-model="user.imageCode"  type="text" class="form-control" placeholder="验证码">
+                              <span class="input-group-addon" id="basic-addon2">
+                                <img v-on:click="loadImageCode()" id="image-code" alt="验证码">
+                              </span>
+                            </div>
+                          </span>
+                        </label>
 
                         <div class="space"></div>
 
                         <div class="clearfix">
                           <label class="inline">
-                            <input type="checkbox" class="ace"/>
+                            <input v-model="remember" type="checkbox" class="ace"/>
                             <span class="lbl">记住我</span>
                           </label>
 
@@ -78,32 +88,70 @@ export default {
   name: 'login',
   data: function () {
     return {
-      user: {}
+      user: {},
+      remember:true,
+      imageCodeToken: ""
     }
   },
   mounted: function () {
+    let _this = this;
     $('body').removeClass('no-skin');
     $('body').attr('class', 'login-layout light-login');
-    let user = SessionStorage.get("USER");
+    let rememberUser = LocalStorage.get(LOCAL_KEY_REMEMBER_USER);
+    if(rememberUser){
+      _this.user=rememberUser;
+    }
+    _this.loadImageCode();
   },
   methods: {
     login() {
       let _this = this;
-      _this.user.password=hex_md5(_this.user.password+KEY);
+     /* let passwordShow=_this.user.password;
+      */
+      let md5=hex_md5(_this.user.password+KEY);
+      let rememberUser=LocalStorage.get(LOCAL_KEY_REMEMBER_USER)||{};
+      if(md5 !==rememberUser.md5){
+        _this.user.password=hex_md5(_this.user.password+KEY);
+      }else{
+        _this.user.password=md5;
+      }
+      _this.user.imageCodeToken = _this.imageCodeToken;
       Loading.show();
       _this.$ajax.post(process.env.VUE_APP_SERVER + '/system/admin/user/login', _this.user).then(
           (response) => {
             Loading.hide();
             let resp=response.data;
             if(resp.success){
-              SessionStorage.set("USER",resp.content)
+              let loginUser = resp.content;
+              Tool.setLoginUser(resp.content);
+              if(_this.remember){
+               var user={
+                  loginName:loginUser.loginname,
+                  password:md5,
+                  md5:md5
+                };
+                LocalStorage.set(LOCAL_KEY_REMEMBER_USER,user);
+              }else{
+                LocalStorage.set(LOCAL_KEY_REMEMBER_USER,null);
+              }
               _this.$router.push("/welcome")
             }else{
               Toast.warning(resp.message);
+              _this.user.password = "";
             }
           }
       );
-    }
+    },
+    loadImageCode() {
+      let _this=this;
+      _this.imageCodeToken=Tool.uuid(8);
+      $('#image-code').attr('src',process.env.VUE_APP_SERVER+'/system/admin/kaptcha/image-code/'+_this.imageCodeToken)
+     }
   }
 }
 </script>
+<style>
+.input-group-addon{
+  padding:0;
+}
+</style>

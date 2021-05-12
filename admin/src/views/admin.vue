@@ -293,23 +293,23 @@
                 <li>
                   <a href="#">
                     <i class="ace-icon fa fa-cog"></i>
-                    Settings
+                    系统设置
                   </a>
                 </li>
 
                 <li>
                   <a href="profile.html">
                     <i class="ace-icon fa fa-user"></i>
-                    Profile
+                    个人信息
                   </a>
                 </li>
 
                 <li class="divider"></li>
 
                 <li>
-                  <a href="#">
+                  <a href="#" v-on:click="logout()">
                     <i class="ace-icon fa fa-power-off"></i>
-                    Logout
+                    退出登录
                   </a>
                 </li>
               </ul>
@@ -357,13 +357,13 @@
           <li class="" id="welcome-sidebar" >
             <router-link to="/welcome">
               <i class="menu-icon fa fa-tachometer"></i>
-              <span class="menu-text"> 欢迎 {{loginUser.name}} </span>
+              <span class="menu-text"> 欢迎： {{loginUser.name}} </span>
             </router-link>
 
             <b class="arrow"></b>
           </li>
 
-          <li class="">
+          <li class="" v-show="hasResource('01')">
             <a href="#" class="dropdown-toggle">
               <i class="menu-icon fa fa-list"></i>
               <span class="menu-text"> 系统管理 </span>
@@ -374,7 +374,7 @@
             <b class="arrow"></b>
 
             <ul class="submenu">
-              <li class="" id="system-user-sidebar">
+              <li  v-show="hasResource('0101')" class="" id="system-user-sidebar">
                 <router-link to="/system/user" >
                   <i class="menu-icon fa fa-caret-right"></i>
                   用户管理
@@ -383,11 +383,19 @@
                 <b class="arrow"></b>
               </li>
 
-              <li class="">
-                <a href="jqgrid.html">
+              <li  v-show="hasResource('0102')" class="" id="system-resource-sidebar">
+                <router-link to="/system/resource">
                   <i class="menu-icon fa fa-caret-right"></i>
-                  jqGrid plugin
-                </a>
+                  资源管理
+                </router-link>
+
+                <b class="arrow"></b>
+              </li>
+              <li  v-show="hasResource('0103')" class="" id="system-role-sidebar">
+                <router-link to="/system/role">
+                  <i class="menu-icon fa fa-caret-right"></i>
+                  角色管理
+                </router-link>
 
                 <b class="arrow"></b>
               </li>
@@ -519,7 +527,10 @@ export default {
     //sidebar 激活样式方法
     _this.activeSidebar(_this.$route.name.replace("/","-")+"-sidebar");
     $.getScript('/ace/assets/js/ace.min.js');
-   _this.loginUser = Tool.getLoginUser("USER");
+   _this.loginUser = Tool.getLoginUser();
+   if(!_this.hasResourceRouter(_this.$route.name)){
+     _this.$router.push("/login");
+   }
   },
   watch:{
     $router:{
@@ -538,6 +549,30 @@ export default {
     }
   },
   methods:{
+    /**
+     * 查找是否有权限
+     * @param router
+     */
+    hasResourceRouter(router){
+      let _this=this;
+      let resources=Tool.getLoginUser().resources;
+      if (Tool.isEmpty(resources)){
+        return false;
+      }
+      for(let i=0;i<resources.length;i++){
+        if(router===resources[i].page){
+          return true;
+        }
+      }
+      return false;
+    },
+    /**
+     * 查找是否有权限
+     * @param id
+     */
+    hasResource(id){
+      return Tool.hasResource(id);
+    },
     login(){
       this.$router.push("/admin")
     },
@@ -559,6 +594,22 @@ export default {
         parentLi.addClass("open active");
       }
 
+    },
+    logout(){
+      let _this = this;
+      Loading.show();
+      _this.$ajax.get(process.env.VUE_APP_SERVER + '/system/admin/user/logout'+_this.loginUser.token).then(
+          (response) => {
+            Loading.hide();
+            let resp=response.data;
+            if(resp.success){
+              Tool.setLoginUser(null);
+              _this.$router.push("/login")
+            }else{
+              Toast.warning(resp.message);
+            }
+          }
+      );
     }
   }
 }
