@@ -42,17 +42,26 @@ public class CourseService {
     @Resource
     private SectionService sectionService;
     /**
-     * 列表查询
+     * 列表查询;关联课程分类表
      */
-    public void list(PageDto pageDto) {
-        PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
+    public void list(CoursePageDto pageDto) {
+       /* PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        if(!StringUtils.isEmpty(pageDto.getStatus())){
+            criteria.andStatusEqualTo(pageDto.getStatus());
+        }
         courseExample.setOrderByClause("sort asc");
         List<Course> courseList = courseMapper.selectByExample(courseExample);
         PageInfo<Course> pageInfo = new PageInfo<>(courseList);
         pageDto.setTotal(pageInfo.getTotal());
         List<CourseDto> courseDtoList = CopyUtil.copyList(courseList, CourseDto.class);
-        pageDto.setList(courseDtoList);
+        pageDto.setList(courseDtoList);*/
+        PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
+        List<CourseDto> list = myCourseMapper.list(pageDto);
+        PageInfo<CourseDto> pageInfo = new PageInfo<>(list);
+        pageDto.setTotal(pageInfo.getTotal());
+        pageDto.setList(list);
     }
 
     /**

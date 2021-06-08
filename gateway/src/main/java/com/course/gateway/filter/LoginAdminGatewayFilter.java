@@ -68,7 +68,7 @@ public class LoginAdminGatewayFilter implements
             if (exist) {
                 log.info("权限校验通过");
             } else {
-                log.info("权限校验未通过");
+                log.info("权限校验未通过:"+path);
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }

@@ -128,7 +128,7 @@ public class CourseuserService {
             //用户不存在
             LOG.info("用户不存在!");
             throw new BusinessException(
-                    BusinessExceptionCode.LOGIN_ERROR);
+                    BusinessExceptionCode.LOGIN_USER_ERROR);
         } else {
             if (courseuser.getPassword().equals(courseuserDto.getPassword())) {
                 //登录成功
@@ -139,7 +139,7 @@ public class CourseuserService {
                 //密码不对
                 LOG.info("密码不对!");
                 throw new BusinessException(
-                        BusinessExceptionCode.LOGIN_ERROR);
+                        BusinessExceptionCode.LOGIN_USER_ERROR);
             }
         }
     }

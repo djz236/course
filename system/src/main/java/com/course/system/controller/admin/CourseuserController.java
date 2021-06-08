@@ -108,7 +108,7 @@ public class CourseuserController {
         LoginCourseuserDto loginCourseuserDto = courseuserService.login(courseuserDto);
         String token = UuidUtil.getShortUuid();
         loginCourseuserDto.setToken(token);
-redisTemplate.opsForValue().set(token, JSON.toJSON(loginCourseuserDto),3600, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token, JSON.toJSON(loginCourseuserDto),3600, TimeUnit.SECONDS);
        // request.getSession().setAttribute(Constants.LOGIN_USER, loginCourseuserDto);
         responseDto.setContent(loginCourseuserDto);
         return responseDto;

@@ -9,17 +9,6 @@ Vue.prototype.$ajax=axios;
 
 //解决每次ajax请求 对应的sessionID 不一致的问题
 axios.defaults.withCredentials=true;
-/*
-
-// 全局过滤器
-Object.keys(filter).forEach(key => {
-  Vue.filter(key, filter[key])
-});
-
-// 解决每次ajax请求，对应的sessionId不一致的问题
-axios.defaults.withCredentials = true;
-
-*/
 
 /**
  * axios 拦截器

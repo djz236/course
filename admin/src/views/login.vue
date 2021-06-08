@@ -123,6 +123,8 @@ export default {
             let resp=response.data;
             if(resp.success){
               let loginUser = resp.content;
+              console.log('login_resp.content:')
+              console.log(resp.content)
               Tool.setLoginUser(resp.content);
               if(_this.remember){
                var user={

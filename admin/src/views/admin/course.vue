@@ -272,7 +272,8 @@ export default {
     add() {
       let _this = this;
       _this.course = {
-        sort:_this.$refs.pagination.total+1
+        sort:_this.$refs.pagination.total+1,
+        image:'http://mycourse2021.oss-cn-beijing.aliyuncs.com/teacher/4P9pfm7046aQ8sgEU4k84.jpg'
       };
       _this.tree.checkAllNodes(false);
       $("#form-modal").modal("show");
