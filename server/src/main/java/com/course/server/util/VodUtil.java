@@ -153,7 +153,7 @@ public class VodUtil {
         return client.getAcsResponse(request);
     }
 
-    public static void main(String[] argv) {
+   /* public static void main(String[] argv) {
         //您的AccessKeyId
         String accessKeyId = "LTAI5tRZHtds6mRcG6ACug16";
         //您的AccessKeySecret
@@ -183,5 +183,5 @@ public class VodUtil {
         } catch (Exception e) {
             System.out.println("上传视频失败, ErrorMessage : " + e.getLocalizedMessage());
         }
-    }
+    }*/
 }
