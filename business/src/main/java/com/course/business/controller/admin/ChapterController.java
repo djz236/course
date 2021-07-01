@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 @RequestMapping("/admin/chapter")
 public class ChapterController {
     private static final Logger LOG = LoggerFactory.getLogger(ChapterController.class);
-    public static final MysqlxDatatypes.Scalar.String BUSINESS_NAME = "大章";
+    public static final  String BUSINESS_NAME = "大章";
     @Resource
     private ChapterService chapterService;
     @PostMapping("/list")
