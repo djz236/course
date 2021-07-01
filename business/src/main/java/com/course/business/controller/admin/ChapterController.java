@@ -34,7 +34,6 @@ public class ChapterController {
     @PostMapping("/save")
     public ResponseDto save(@RequestBody ChapterDto chapterDto) {
         LOG.info("chapterDto:{}", chapterDto);
-
         ValidatorUtil.require(chapterDto.getName(), "名称");
         ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
         ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
