@@ -6,6 +6,7 @@ import com.course.server.dto.PageDto;
 import com.course.server.dto.ResponseDto;
 import com.course.server.service.ChapterService;
 import com.course.server.util.ValidatorUtil;
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,14 @@ import javax.annotation.Resource;
 @RequestMapping("/admin/chapter")
 public class ChapterController {
     private static final Logger LOG = LoggerFactory.getLogger(ChapterController.class);
-    public static final String BUSINESS_NAME = "大章";
+    public static final MysqlxDatatypes.Scalar.String BUSINESS_NAME = "大章";
     @Resource
     private ChapterService chapterService;
     @PostMapping("/list")
     public ResponseDto list(@RequestBody ChapterPageDto chapterPageDto) {
         ResponseDto responseDto = new ResponseDto();
         ValidatorUtil.require(chapterPageDto.getCourseId(), "课程ID");
+       // System
         LOG.info("pageDto:{}", chapterPageDto);
         chapterService.list(chapterPageDto);
         responseDto.setContent(chapterPageDto);
