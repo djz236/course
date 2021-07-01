@@ -24,7 +24,6 @@ public class ChapterController {
     public ResponseDto list(@RequestBody ChapterPageDto chapterPageDto) {
         ResponseDto responseDto = new ResponseDto();
         ValidatorUtil.require(chapterPageDto.getCourseId(), "课程ID");
-
         LOG.info("pageDto:{}", chapterPageDto);
         chapterService.list(chapterPageDto);
         responseDto.setContent(chapterPageDto);
