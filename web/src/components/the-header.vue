@@ -60,7 +60,6 @@
        * 打开登录注册窗口
        */
       openLoginModal() {
-        alert(1);
         let _this = this;
         _this.$refs.loginComponent.openLoginModal();
       },

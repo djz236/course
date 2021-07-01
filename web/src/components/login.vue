@@ -1,5 +1,5 @@
 <template>
-  <div id="login-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div id="login-modal" class="modal fade show" tabindex="-1" role="dialog" >
     <div class="modal-dialog modal-login" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -246,8 +246,8 @@
        */
       openLoginModal() {
         let _this = this;
-        alert(2);
-        $("#login-modal").modal("show");
+        var a= $("#login-modal").modal("show");
+        console.log(a);
       },
 
       //---------------登录框、注册框、忘记密码框切换-----------------
@@ -279,18 +279,11 @@
 
         // 提交之前，先校验所有输入框
         // 注意：当有一个文本框校验为false时，其它不校验
-       /* let validateResult = _this.onRegisterMobileBlur() &&
+        let validateResult = _this.onRegisterMobileBlur() &&
           _this.onRegisterMobileCodeBlur() &&
           _this.onRegisterNameBlur() &&
           _this.onRegisterPasswordBlur() &&
-          _this.onRegisterConfirmPasswordBlur();*/
-        let validateResult1=_this.onRegisterMobileBlur();
-        let validateResult2=_this.onRegisterMobileCodeBlur();
-        let validateResult3=_this.onRegisterNameBlur();
-        let validateResult4=_this.onRegisterPasswordBlur();
-        let validateResult5=_this.onRegisterConfirmPasswordBlur();
-        let validateResult=validateResult1&&validateResult2
-            &&validateResult3&&validateResult4&&validateResult5;
+          _this.onRegisterConfirmPasswordBlur();
         if (!validateResult) {
           return;
         }

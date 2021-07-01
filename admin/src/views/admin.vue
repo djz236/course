@@ -428,7 +428,7 @@
 
                 <b class="arrow"></b>
               </li>
-              <li  v-show="hasResource('0203')" class=""id="business-teacher-sidebar" >
+              <li  v-show="hasResource('0203')" class="" id="business-teacher-sidebar" >
                 <router-link to="/business/teacher">
                   <i class="menu-icon fa fa-caret-right"></i>
                   讲师管理
